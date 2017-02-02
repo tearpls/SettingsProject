@@ -50,23 +50,14 @@ Settings::~Settings()
 }
 
 
-void Settings::autoChange(const char* field, const char* value)
-{
-	try {
-		(this->*fieldsLUT.at(field))->undoValue(value);
-	}
-	catch (const out_of_range& e)
-	{
-		cout << "Please enter correct settings field!" << endl;
-	}
-
-}
-
 void Settings::manualChange(const char* field, const char* value)
 {
 	try {
-		(this->*fieldsLUT.at(field))->setValue(value);
-		//Check if setting which affects graphics_quality is changed
+		//Try get field by name and change value
+		Field* currentField = (this->*fieldsLUT.at(field));
+		currentField->setValue(value);
+
+		//Check if setting which affects graphics_quality is changed. Set graaphics_quality to Custom if true
 		if (find(qualitySettings.begin(), qualitySettings.end(), field) != qualitySettings.end()) {
 			
 			GraphicsQualityField* graphicsQualityPtr = static_cast<GraphicsQualityField*>(graphicsQuality);
@@ -82,10 +73,27 @@ void Settings::manualChange(const char* field, const char* value)
 
 }
 
+
+void Settings::autoChange(const char* field, const char* value)
+{
+	try {
+		//Try get field by name and change value
+		Field* currentField = (this->*fieldsLUT.at(field));
+		currentField->undoValue(value);
+	}
+	catch (const out_of_range& e)
+	{
+		cout << "Please enter correct settings field!" << endl;
+	}
+
+}
+
 void Settings::printField(const char* field)
 {
 	try {
-		(this->*fieldsLUT.at(field))->printValue();
+		//Try get field by name and print value
+		Field* currentField = (this->*fieldsLUT.at(field));
+		currentField->printValue();
 	}
 	catch (const out_of_range& e)
 	{
@@ -103,9 +111,10 @@ void Settings::printAllSettings()
 
 void Settings::setOutputFormat(const char* str)
 {
-	
+	//Check if entered format is available and set
 	if (formatsLUT.find(str) != formatsLUT.end()) {
 		format = str;
+		this->printDoneMessage();
 	}
 	else
 	{
@@ -119,7 +128,9 @@ void Settings::saveToFile(const char* name)
 
 	try
 	{
+		//Check if correct format is set and try to formate and save file
 		(this->*formatsLUT.at(format))(name);
+
 	}
 	catch(const out_of_range& e)
 	{
@@ -131,7 +142,7 @@ void Settings::saveToFile(const char* name)
 
 void Settings::saveToBin(const char* name) const
 {
-
+	//Format file name
 	string fileName = string{ name } +string{ "." } +format;
 
 	ofstream file1(fileName, ios::out | ios::binary);
@@ -146,7 +157,7 @@ void Settings::saveToBin(const char* name) const
 		//Write data to the file
 		file1.write(&data.c_str()[0], data.size());
 		file1.close();
-		cout << "File saved successfully!" << endl;
+		this->printDoneMessage();
 	}
 	else {
 		cout << "File error write" << endl;
@@ -179,7 +190,7 @@ void Settings::saveToXml(const char* name) const
 
 		string fileName = string{ name } + ".xml";
 		doc.SaveFile(fileName.c_str());
-	
+		this->printDoneMessage();
 	}
 	catch (...)
 	{
@@ -194,7 +205,7 @@ void Settings::addFieldInStack(const char* field, const char* value)
 	if (undoValues.size() > 0) {
 		stack<pair<string, string>>().swap(undoValues);
 	}
-	
+	//Adding "previous" field, value to the stack
 	oldValues.push(pair<string, string>{ string{ field }, string{ value } }); 
 };
 
@@ -205,12 +216,16 @@ void Settings::undo()
 
 		pair<string, string> oldValue = oldValues.top();
 		oldValues.pop();
-		//Push old value to the stack 
-		undoValues.push(pair<string, string>{(this->*fieldsLUT.at(oldValue.first))->getField(), (this->*fieldsLUT.at(oldValue.first))->getValue() });
 
+		//Push undone value to the "redo" stack
+		string field = (this->*fieldsLUT.at(oldValue.first))->getField();
+		string value = (this->*fieldsLUT.at(oldValue.first))->getValue();
+		undoValues.push(pair<string, string>{field , value });
+
+		//Revert value to the previous
 		(this->*fieldsLUT.at(oldValue.first))->undoValue(oldValue.second.c_str());
 
-		
+		this->printDoneMessage();
 	}
 	else {
 		cout << "Nothing to Undo!" << endl;
@@ -222,15 +237,18 @@ void Settings::undo()
 void Settings::redo()
 {
 	if (undoValues.size() > 0) {
-		
+		//Get value from the "redo" stack
 		pair<string, string> newValue = undoValues.top();
 		undoValues.pop();
 		
-		//Push old value to the stack 
-		oldValues.push(pair<string, string>{(this->*fieldsLUT.at(newValue.first))->getField(), (this->*fieldsLUT.at(newValue.first))->getValue() });
+		//Push redone value to the "undo" stack
+		string field = (this->*fieldsLUT.at(newValue.first))->getField();
+		string value = (this->*fieldsLUT.at(newValue.first))->getValue();
+		oldValues.push(pair<string, string>{field, value });
 		
+		//Cancel undone command
 		(this->*fieldsLUT.at(newValue.first))->undoValue(newValue.second.c_str());
-
+		this->printDoneMessage();
 	}
 	else {
 		cout << "Nothing to Redo!" << endl;

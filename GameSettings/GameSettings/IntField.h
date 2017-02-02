@@ -18,6 +18,7 @@ public:
 	~IntField() {};
 
 	virtual void printValue() override;
+
 	virtual void setValue(const char* str) override;
 
 	virtual void undoValue(const char* str) override;

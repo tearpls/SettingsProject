@@ -55,6 +55,7 @@ protected:
 	//Get corresponding available settings fields values
 	vector<string> Field::getAvailableValues(const char* str);
 
+	void printDoneMessage() { cout << "Success!" << endl; };
 };
 
 

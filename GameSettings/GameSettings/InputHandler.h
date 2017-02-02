@@ -35,8 +35,20 @@ private:
 	vector<string> currentCommand;
 
 	//Commands Look Up Table 
-	static const map<string, void (InputHandler::*)() const> commandsLUT;
-	
+	const map<string, void (InputHandler::*)() const> commandsLUT
+	{
+		{ string{ "change" }, &InputHandler::change },
+		{ string{ "get" }, &InputHandler::get },
+		{ string{ "print" }, &InputHandler::print },
+		{ string{ "format" }, &InputHandler::format },
+		{ string{ "save" }, &InputHandler::save },
+		{ string{ "exit" }, &InputHandler::exit },
+		{ string{ "undo" }, &InputHandler::undo },
+		{ string{ "redo" }, &InputHandler::redo }
+
+	};
+
+
 	Settings* currentSettings;
 };
 

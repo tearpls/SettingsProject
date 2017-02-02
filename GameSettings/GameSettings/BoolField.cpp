@@ -12,9 +12,14 @@ void BoolField::setValue(const char* str)
 {
 	try
 	{
+
 		bool newValue = boolMapping.at(str);
+
 		currentSettings->addFieldInStack(field.c_str(), this->getValue().c_str());
+		
 		value = newValue;
+
+		this->printDoneMessage();
 	}
 	catch (...)
 	{
@@ -39,15 +44,15 @@ void BoolField::undoValue(const char* str)
 
 
 
-std::string BoolField::getField()
+string BoolField::getField()
 {
 	return field;
 }
 
 
-std::string BoolField::getValue()
+string BoolField::getValue()
 {
-	std::stringstream  ss;
-	ss << std::boolalpha << value;
+	stringstream  ss;
+	ss << boolalpha << value;
 	return ss.str();
 }

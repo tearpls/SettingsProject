@@ -3,20 +3,6 @@
 #include <sstream>
 
 
-
-const map<string, void (InputHandler::*)() const> InputHandler::commandsLUT
-{
-	{ string{ "change" }, &InputHandler::change },
-	{ string{ "get" }, &InputHandler::get },
-	{ string{ "print" }, &InputHandler::print },
-	{ string{ "format" }, &InputHandler::format },
-	{ string{ "save" }, &InputHandler::save },
-	{ string{ "exit" }, &InputHandler::exit },
-	{ string{ "undo" }, &InputHandler::undo },
-	{ string{ "redo" }, &InputHandler::redo }
-
-};
-
 InputHandler::InputHandler()
 {
 	

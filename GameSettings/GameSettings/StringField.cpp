@@ -17,8 +17,8 @@ void StringField::setValue(const char* str)
 		{
 
 			currentSettings->addFieldInStack(field.c_str(), value.c_str());
-			
 			value = str;
+			this->printDoneMessage();
 		}
 		else {
 

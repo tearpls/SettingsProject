@@ -30,7 +30,7 @@ public:
 
 	void saveToFile(const char* name);
 
-	/*Add old value of field in stack for 'undo' functional*/
+	/*Add old value of field into stack for 'undo' functional*/
 	void addFieldInStack(const char* field, const char* value);
 
 	void undo();
@@ -49,7 +49,7 @@ private:
 	
 	vector<Field*> fields;
 
-	//Settings fields which affects graphics_quality field
+	//Settings fields which affect graphics_quality field
 	vector<string> qualitySettings{ string{ "texture_quality" }, string{ "dynamic_lighting" },  string{ "shadows_quality" } };
 
 	//Fields look-up table
@@ -70,6 +70,7 @@ private:
 	string format;
 
 	void saveToXml(const char* name) const;
+
 	void saveToBin(const char* name) const;
 
 	//Available formats
@@ -83,5 +84,7 @@ private:
 	stack< pair<string, string> > oldValues;
 	//Undone fields
 	stack< pair<string, string> > undoValues;
+
+	void printDoneMessage() const { cout << "Success!" << endl;  };
 };
 

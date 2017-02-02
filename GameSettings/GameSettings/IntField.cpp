@@ -14,8 +14,9 @@ void IntField::setValue(const char* str)
 		if (val >= min && val <= max) {
 
 			currentSettings->addFieldInStack(field.c_str(), this->getValue().c_str());
-
 			value = val;
+
+			this->printDoneMessage();
 		}
 		else {
 			cout << "Please enter value within allowable range!" << endl;

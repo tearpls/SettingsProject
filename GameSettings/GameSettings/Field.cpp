@@ -1,6 +1,5 @@
 #include "Field.h"
 
-
 vector<string> Field::getAvailableValues(const char* str)
 {
 	vector<string> values;

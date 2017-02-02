@@ -17,7 +17,9 @@ public:
 		currentSettings = settings;
 	};
 	~GraphicsQualityField() {};
+
 	virtual void printValue() override;
+
 	virtual void setValue(const char* str) override;
 	
 	virtual void undoValue(const char* str) override;
@@ -26,16 +28,18 @@ public:
 
 	virtual string getValue() override;
 
+	//Method for saving current custom configuration
 	void saveCustomField(const char* field, const char* value);
 
 private:
 	string value;
 	string field;
 	Settings* currentSettings;
+
 	//Changing corresponding settings fields regarding on the quality selected
 	void changeSettings();
 
-	//Graphics Quality settings
+	//Graphics Quality settings, Custom set as Normal by default
 	multimap<string, pair<string, string> > graphicsQualityMapping
 	{
 		{ "Low",  pair<string, string>{"texture_quality", "Low"} },
